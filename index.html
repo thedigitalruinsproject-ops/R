@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheDigitalRuins | Portal de Noticias Autónomo</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --bg-principal: #0a0c10;
+            --color-acento: #ffb000;
+            --color-acento-rgb: 255, 176, 0;
+            --bg-tarjetas: #121620;
+            --borde-sutil: #2a3347;
+            --texto-claro: #e2e8f0;
+            --texto-apagado: #94a3b8;
+            
+            /* IDENTIDAD TIPOGRÁFICA CARGADA */
+            --ff-titulos: 'Playfair Display', Georgia, serif;
+            --ff-cuerpo: 'Space Grotesk', sans-serif;
+            --ff-tecnica: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg-principal) !important;
+            color: var(--texto-claro) !important;
+            font-family: var(--ff-cuerpo);
+            overflow-x: hidden;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .wrapper-principal { display: flex; flex-direction: column; flex: 1; }
+
+        header { 
+            border-bottom: 2px solid var(--color-acento); 
+            background-color: var(--bg-principal); 
+            position: sticky; top: 0; z-index: 100; 
+        }
+        .top-bar { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 15px 20px; border-bottom: 1px solid var(--borde-sutil); }
+        
+        .logo-main { 
+            font-size: 1.9rem; 
+            font-weight: 800; 
+            color: var(--texto-claro); 
+            text-decoration: none; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            font-family: var(--ff-titulos); 
+            text-align: center; 
+            user-select: none;
+        }
+        .logo-main span { color: var(--color-acento); cursor: pointer; transition: text-shadow 0.3s; }
+        .logo-main span:hover { text-shadow: 0 0 10px rgba(var(--color-acento-rgb), 0.5); }
+        .header-tag { font-size: 0.75rem; color: var(--texto-apagado); font-family: var(--ff-tecnica); letter-spacing: 1px; text-transform: uppercase; }
+
+        /* TICKER */
+        .ticker-container { background: linear-gradient(90deg, #121620 0%, #0d111a 100%); border-bottom: 1px solid var(--borde-sutil); overflow: hidden; white-space: nowrap; display: flex; align-items: center; height: 42px; }
+        .ticker-label { background: var(--color-acento); color: #0a0c10; padding: 0 15px; height: 100%; display: flex; align-items: center; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; z-index: 3; box-shadow: 5px 0 15px rgba(10, 12, 16, 0.6); font-family: var(--ff-cuerpo); letter-spacing: 0.5px;}
+        .ticker-text-wrapper { display: inline-block; animation: ticker 35s linear infinite; padding-left: 10px; z-index: 1; font-family: var(--ff-tecnica); }
+        .ticker-item { display: inline-block; padding: 0 35px; color: var(--texto-claro); font-size: 0.85rem; font-weight: 400; }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+
+        /* CUERPO ASIDE Y FEED */
+        .cuerpo-plataforma { display: flex; flex-direction: column; width: 100%; max-width: 1200px; margin: 0 auto; flex: 1; }
+        aside { width: 100%; background: #0d111a; border-bottom: 1px solid var(--borde-sutil); padding: 25px 20px; }
+        .aside-titulo { font-size: 0.75rem; text-transform: uppercase; color: var(--color-acento); letter-spacing: 2px; margin-bottom: 15px; font-weight: 700; font-family: var(--ff-tecnica); }
+        .menu-secciones { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .menu-secciones li { font-size: 0.9rem; text-transform: uppercase; font-weight: 500; color: var(--texto-apagado); cursor: pointer; transition: 0.2s; padding: 4px 0; letter-spacing: 0.5px; }
+        .menu-secciones li:hover, .menu-secciones li.active { color: var(--color-acento); padding-left: 5px; }
+
+        .container-feed { padding: 20px 15px; flex: 1; }
+        .news-feed-header { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--borde-sutil); padding-bottom: 15px; }
+        .news-feed-header h2 { font-family: var(--ff-titulos); font-weight: 600; font-size: 1.6rem; }
+
+        .grid-featured { display: flex; flex-direction: column; gap: 25px; margin-bottom: 40px; }
+        .news-card { background: var(--bg-tarjetas); border: 1px solid var(--borde-sutil); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s; }
+        .news-card:hover { border-color: var(--color-acento); transform: translateY(-2px); }
+        .news-img { width: 100%; height: auto; max-height: 380px; object-fit: cover; border-bottom: 1px solid var(--borde-sutil); }
+        .news-body { padding: 20px; }
+        .news-tag { font-size: 0.75rem; text-transform: uppercase; font-weight: 600; color: #00e5ff; margin-bottom: 8px; display: inline-block; font-family: var(--ff-tecnica); }
+        .news-title { font-family: var(--ff-titulos); font-size: 1.55rem; font-weight: 600; line-height: 1.3; margin-bottom: 10px; color: #ffffff; cursor: pointer; transition: 0.2s; }
+        .news-title:hover { color: var(--color-acento); }
+        .news-excerpt { color: var(--texto-apagado); font-size: 0.95rem; margin-bottom: 15px; font-weight: 400; }
+        .news-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--texto-apagado); border-top: 1px solid var(--borde-sutil); padding-top: 12px; font-family: var(--ff-tecnica); }
+
+        /* INPUTS Y FORMULARIOS */
+        .comment-input { background: #1a1f2c; border: 1px solid var(--borde-sutil); color: var(--texto-claro); padding: 12px; border-radius: 4px; font-family: var(--ff-cuerpo); width: 100%; margin-bottom: 10px; font-size: 0.95rem; }
+        .comment-input:focus { border-color: var(--color-acento); outline: none; }
+        .comment-submit { background: transparent; border: 1px solid var(--color-acento); color: var(--color-acento); padding: 14px; cursor: pointer; font-weight: bold; border-radius: 4px; width: 100%; margin-top: 5px; text-transform: uppercase; transition: 0.2s; font-family: var(--ff-cuerpo); letter-spacing: 0.5px; }
+        .comment-submit:hover { background: var(--color-acento); color: #0a0c10; }
+        .file-label { display: block; background: #2a3347; color: var(--texto-claro); padding: 12px; border-radius: 4px; border: 1px dashed var(--color-acento); cursor: pointer; text-align: center; margin-bottom: 10px; font-family: var(--ff-cuerpo); }
+
+        /* COMPARTIR */
+        .share-bar { display: flex; align-items: center; gap: 10px; margin: 20px 0; padding: 10px 0; border-top: 1px dashed var(--borde-sutil); border-bottom: 1px dashed var(--borde-sutil); font-family: var(--ff-cuerpo); }
+        .share-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; text-decoration: none; color: #fff; transition: opacity 0.2s; }
+        .share-btn:hover { opacity: 0.85; }
+        .share-x { background-color: #000000; border: 1px solid #333; }
+        .share-wa { background-color: #25D366; color: #fff; }
+        .share-ig { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+        /* INTERFAZ DE ADMINISTRACIÓN DE PANTALLA COMPLETA */
+        .full-admin-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #070a12; z-index: 2000; display: none; overflow-y: auto; padding: 30px 15px; font-family: var(--ff-cuerpo); }
+        .admin-box-maestro { max-width: 1100px; margin: 0 auto; background: #0f1422; border: 2px solid var(--color-acento); border-radius: 8px; padding: 25px; box-shadow: 0 0 35px rgba(var(--color-acento-rgb), 0.2); }
+        .admin-header-panel { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--borde-sutil); padding-bottom: 15px; margin-bottom: 25px; }
+        
+        .grid-config-columns { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 25px; }
+        .config-card { background: #161d2f; border: 1px solid var(--borde-sutil); padding: 20px; border-radius: 6px; }
+        .config-card h4 { color: var(--color-acento); margin-bottom: 15px; font-size: 1rem; text-transform: uppercase; display: flex; align-items: center; gap: 8px; font-family: var(--ff-cuerpo); font-weight: 700; }
+
+        .palette-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .palette-btn { background: #222b3e; border: 1px solid var(--borde-sutil); padding: 10px; text-align: left; border-radius: 4px; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-family: var(--ff-cuerpo); }
+        .palette-preview { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+
+        .control-list-container { max-height: 200px; overflow-y: auto; background: #0a0e1a; padding: 10px; border-radius: 4px; border: 1px solid var(--borde-sutil); font-family: var(--ff-cuerpo); }
+        .control-row-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #1f2738; font-size: 0.85rem; gap: 10px; }
+        
+        .btn-inline-admin { background: #2a3347; border: none; color: #fff; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 0.75rem; font-family: var(--ff-cuerpo); }
+        .btn-inline-admin.edit-btn { background: var(--color-acento); color: #000; font-weight: bold; }
+        .btn-inline-admin.del-btn { background: #ef4444; color: #fff; }
+
+        .emoji-box-wrapper { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin-bottom: 12px; background: #0d111a; padding: 10px; border-radius: 4px; }
+        .emoji-node { background: #1c2638; text-align: center; padding: 6px 0; font-size: 1.1rem; border-radius: 4px; cursor: pointer; }
+        .emoji-node:hover { background: var(--color-acento); color: #000; }
+
+        .section-row-item { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+        .btn-order-action { background: #2a3347; border: none; color: #fff; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; }
+
+        /* MODALES Y COMENTARIOS */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 12, 16, 0.98); z-index: 1000; display: none; justify-content: center; align-items: center; }
+        .modal-content { background: var(--bg-tarjetas); width: 100%; height: 100%; overflow-y: auto; padding: 30px 20px; position: relative; }
+        .close-modal { position: absolute; top: 15px; right: 15px; background: #1a1f2c; border: 1px solid var(--borde-sutil); color: var(--texto-claro); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .modal-img { width: 100%; max-height: 350px; object-fit: cover; border-radius: 6px; margin-bottom: 20px; }
+
+        .comments-section { margin-top: 25px; background: #0d111a; padding: 15px; border-radius: 6px; border: 1px solid var(--borde-sutil); }
+        .comment-item { background: var(--bg-tarjetas); padding: 12px; border-radius: 4px; margin-bottom: 10px; border-left: 3px solid var(--color-acento); }
+        .comment-author { font-size: 0.85rem; font-weight: bold; color: #00e5ff; font-family: var(--ff-cuerpo); }
+        .comment-text { font-size: 0.95rem; color: var(--texto-claro); font-family: var(--ff-cuerpo); }
+        .comment-time { font-family: var(--ff-tecnica); font-size: 0.75rem; color: #64748b; text-align: right; margin-top: 5px; }
+
+        footer { background-color: #0d111a; border-top: 1px solid var(--borde-sutil); padding: 30px 20px; margin-top: auto; text-align: center; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .footer-email { font-size: 1.05rem; color: #ffffff; text-decoration: none; font-family: var(--ff-tecnica); background: #121620; padding: 8px 18px; border-radius: 30px; border: 1px solid var(--borde-sutil); display: inline-flex; align-items: center; gap: 10px; }
+
+        @media (min-width: 768px) {
+            .top-bar { flex-direction: row; justify-content: space-between; padding: 15px 4%; }
+            .cuerpo-plataforma { flex-direction: row; }
+            aside { width: 280px; border-bottom: none; border-right: 1px solid var(--borde-sutil); padding: 35px 25px; }
+            .container-feed { padding: 35px 30px; }
+            .grid-config-columns { grid-template-columns: 1fr 1fr; }
+            .modal-content { max-width: 760px; height: auto; max-height: 90vh; border-radius: 8px; border: 1px solid var(--borde-sutil); padding: 40px; }
+            .footer-content { flex-direction: row; justify-content: space-between; text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="top-bar">
+            <div class="header-tag" id="pub-header-tag-left"><i class="fa-solid fa-box-archive"></i> PRESERVACIÓN DIGITAL</div>
+            <div class="logo-main" id="pub-main-logo">TheDigital<span ondblclick="toggleControlMaestro()">Ruins</span></div>
+            <div class="header-tag" id="pub-header-tag-right" style="color: var(--color-acento); font-weight: bold;"><i class="fa-solid fa-bullhorn"></i> PRENSA AUTÓNOMA</div>
+        </div>
+        <div class="ticker-container">
+            <div class="ticker-label">Último Minuto</div>
+            <div class="ticker-text-wrapper" id="ticker-text-container"></div>
+        </div>
+    </header>
+
+    <div class="wrapper-principal" id="view-public-portal">
+        <div class="cuerpo-plataforma">
+            <aside>
+                <div class="aside-titulo">Secciones de Investigación</div>
+                <ul class="menu-secciones" id="render-aside-menu"></ul>
+            </aside>
+
+            <div class="container-feed">
+                <div class="news-feed-header">
+                    <h2 id="current-category-title">Todos los Artículos</h2>
+                </div>
+                <div id="news-container" class="grid-featured"></div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <div>
+                    <div id="pub-footer-title" style="font-size: 0.9rem; text-transform: uppercase; color: var(--color-acento); font-weight:700;"><i class="fa-solid fa-headset"></i> Canal de Contacto Oficial</div>
+                    <p id="pub-footer-desc" style="font-size: 0.85rem; color: #94a3b8; margin-top: 5px;">Mesa de partes virtual confidencial para envío de reportes y filtraciones.</p>
+                </div>
+                <div>
+                    <a href="mailto:thedigitalruinsproject@gmail.com" class="footer-email" id="pub-footer-mail">
+                        <i class="fa-solid fa-envelope"></i> thedigitalruinsproject@gmail.com
+                    </a>
+                </div>
+            </div>
+            <div class="footer-copy" style="font-size:0.75rem; color:#64748b; text-align:center; margin-top:15px; font-family: var(--ff-tecnica);">
+                &copy; 2026 THEDIGITALRUINS. Todos los derechos reservados.
+            </div>
+        </footer>
+    </div>
+
+    <!-- ENTORNO CONTROL MAESTRO AISLADO COMPLETO -->
+    <div id="panel-control-maestro" class="full-admin-overlay">
+        <div class="admin-box-maestro">
+            <div class="admin-header-panel">
+                <h2 style="color: var(--color-acento); font-size: 1.5rem; font-family: var(--ff-titulos);"><i class="fa-solid fa-folder-gear"></i> Consola de Control Maestro General</h2>
+                <button class="comment-submit" style="width:auto; padding: 8px 16px; margin:0;" onclick="toggleControlMaestro()">Volver al Portal Público</button>
+            </div>
+
+            <!-- FILA EDICIÓN DE TEXTOS DE CABECERA Y FOOTER -->
+            <div class="config-card" style="margin-bottom: 25px;">
+                <h4><i class="fa-solid fa-font"></i> Editor de Títulos e Identidad General (Textos del Portal)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                    <div>
+                        <label style="font-size:0.75rem; color:var(--texto-apagado);">Nombre del Portal:</label>
+                        <input type="text" id="cfg-portal-name" class="comment-input" oninput="updateLiveTexts()">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem; color:var(--texto-apagado);">Tag Izquierdo Superior:</label>
+                        <input type="text" id="cfg-tag-left" class="comment-input" oninput="updateLiveTexts()">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem; color:var(--texto-apagado);">Tag Derecho Superior:</label>
+                        <input type="text" id="cfg-tag-right" class="comment-input" oninput="updateLiveTexts()">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 10px;">
+                    <div>
+                        <label style="font-size:0.75rem; color:var(--texto-apagado);">Título de Contacto (Footer):</label>
+                        <input type="text" id="cfg-footer-title" class="comment-input" oninput="updateLiveTexts()">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem; color:var(--texto-apagado);">Descripción de Contacto (Footer):</label>
+                        <input type="text" id="cfg-footer-desc" class="comment-input" oninput="updateLiveTexts()">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem; color:var(--texto-apagado);">Email de Contacto (Footer):</label>
+                        <input type="text" id="cfg-footer-mail" class="comment-input" oninput="updateLiveTexts()">
+                    </div>
+                </div>
+                <button class="comment-submit" style="padding:10px; font-size:0.85rem; margin-top: 5px;" onclick="savePortalTexts()">Guardar Textos de Identidad</button>
+            </div>
+
+            <div class="grid-config-columns">
+                <!-- COLUMNA COLORES Y TICKER -->
+                <div class="config-card">
+                    <h4><i class="fa-solid fa-palette"></i> Paletas Temáticas de Identidad</h4>
+                    <div class="palette-grid">
+                        <button class="palette-btn" onclick="selectPalette('#0a0c10', '#ffb000')"><span class="palette-preview" style="background:#ffb000;"></span> Ámbar Clásico</button>
+                        <button class="palette-btn" onclick="selectPalette('#060f0e', '#00ffcc')"><span class="palette-preview" style="background:#00ffcc;"></span> Matrix Cyber</button>
+                        <button class="palette-btn" onclick="selectPalette('#1a0f1a', '#ff0055')"><span class="palette-preview" style="background:#ff0055;"></span> Ruina Carmesí</button>
+                        <button class="palette-btn" onclick="selectPalette('#111111', '#ffffff')"><span class="palette-preview" style="background:#ffffff;"></span> Prensa Minimal</button>
+                    </div>
+                    
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div>
+                            <label style="font-size:0.75rem; color:var(--texto-apagado);">Fondo Personalizado:</label>
+                            <input type="color" id="cfg-bg-color" class="comment-input" style="height:40px; padding:2px;" onchange="applyCustomColors()">
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem; color:var(--texto-apagado);">Acento Personalizado:</label>
+                            <input type="color" id="cfg-accent-color" class="comment-input" style="height:40px; padding:2px;" onchange="applyCustomColors()">
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top:20px;"><i class="fa-solid fa-bolt"></i> Caja Central de Símbolos Informativos</h4>
+                    <div class="emoji-box-wrapper" id="ticker-emoji-grid"></div>
+                    <input type="text" id="ticker-input" class="comment-input" placeholder="Anuncio de la barra de noticias...">
+                    <button class="comment-submit" style="padding:10px; font-size:0.85rem;" onclick="saveTickerData()">Actualizar Ticker</button>
+                </div>
+
+                <!-- COLUMNA CONTROL DE APARTADOS -->
+                <div class="config-card">
+                    <h4><i class="fa-solid fa-list-check"></i> Ordenador y Editor de Apartados Laterales</h4>
+                    <div id="section-manager-container" style="margin-bottom:12px;"></div>
+                    <div style="display: flex; gap: 10px; border-top: 1px dashed var(--borde-sutil); padding-top: 15px;">
+                        <input type="text" id="new-section-name" class="comment-input" style="margin:0;" placeholder="Nombre de nueva sección...">
+                        <button class="comment-submit" style="width: auto; margin:0; padding:0 20px; font-size:0.85rem;" onclick="addNewSection()">Añadir Sección</button>
+                    </div>
+                    <button class="comment-submit" style="padding:10px; font-size:0.85rem; margin-top: 15px;" onclick="saveSectionLayout()">Guardar Estructura Lateral</button>
+                </div>
+            </div>
+
+            <!-- GESTORES INTEGRADOS EXCLUSIVOS DEL CONTROL MAESTRO -->
+            <div class="grid-config-columns">
+                <!-- PANEL GESTOR DE ARTÍCULOS EXISTENTES -->
+                <div class="config-card">
+                    <h4><i class="fa-solid fa-newspaper"></i> Inventario y Modificación de Artículos</h4>
+                    <div class="control-list-container" id="admin-news-inventory"></div>
+                </div>
+
+                <!-- PANEL GESTOR DE COMENTARIOS EXISTENTES -->
+                <div class="config-card">
+                    <h4><i class="fa-solid fa-comment-dots"></i> Buscador y Editor Global de Comentarios</h4>
+                    <div class="control-list-container" id="admin-comments-inventory"></div>
+                </div>
+            </div>
+
+            <!-- REDACTOR/EDITOR DE ENTRADAS -->
+            <div class="config-card" style="background: #141b2b;" id="anchor-redactor">
+                <h3 id="form-action-title" style="color: var(--color-acento); margin-bottom: 15px;"><i class="fa-solid fa-pen-nib"></i> Formulario Redactor Avanzado</h3>
+                <input type="hidden" id="edit-post-id" value="">
+                <input type="hidden" id="post-img-base64" value="">
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <input type="text" id="post-title" class="comment-input" placeholder="Título Central de la Noticia">
+                    <input type="text" id="post-tag" class="comment-input" placeholder="Subtítulo / Jurisdicción">
+                </div>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <select id="post-category" class="comment-input"></select>
+                    <div>
+                        <label class="file-label" for="post-img-file" style="margin:0; padding:10px;"><i class="fa-solid fa-image"></i> Cargar Imagen</label>
+                        <input type="file" id="post-img-file" accept="image/*" style="display: none;" onchange="processLocalImage(this)">
+                        <div id="file-preview-status" style="font-size:0.8rem; color:#00e5ff; display:none; margin-top:2px;"></div>
+                    </div>
+                </div>
+
+                <textarea id="post-excerpt" class="comment-input" style="height: 50px; resize: none; margin-top:10px;" placeholder="Resumen corto..."></textarea>
+                <textarea id="post-content" class="comment-input" style="height: 150px;" placeholder="Cuerpo argumentativo completo..."></textarea>
+                
+                <button id="btn-submit-form" class="comment-submit" onclick="savePost()">Ejecutar Guardado Completo</button>
+                <button id="btn-cancel-form" class="comment-submit" onclick="cancelEditing()" style="display:none; border-color:#ef4444; color:#ef4444;">Descartar Edición</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE DETALLE -->
+    <div id="article-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeArticle()"><i class="fa-solid fa-xmark"></i></button>
+            <div id="modal-body-content"></div>
+            
+            <div class="share-bar" id="modal-share-bar"></div>
+
+            <div class="comments-section">
+                <h4 style="color:var(--color-acento); margin-bottom:12px;"><i class="fa-solid fa-comments"></i> Mesa de Discusión Pública</h4>
+                <div id="comments-list-container"></div>
+                <div style="margin-top:15px; border-top:1px solid var(--borde-sutil); padding-top:15px;">
+                    <input type="text" id="commenter-name" class="comment-input" placeholder="Tu Nombre o Iniciales" style="margin-bottom:8px;">
+                    <textarea id="commenter-text" class="comment-input" style="height:60px; resize:none;" placeholder="Aporte u opinión civil..."></textarea>
+                    <button class="comment-submit" style="padding:10px; font-size:0.85rem;" onclick="submitNewComment()">Subir Comentario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const _0x_admin_user = "CreatorRuins";
+        const _0x_admin_pass = "hs6asm!yVc_9D!W";
+        const _0x_admin_secret = "Sec2026_Admin";
+        
+        let currentFilter = 'all';
+        let isAdminUnlocked = false; 
+        let activeArticleId = null;
+
+        const wideEmojiBank = ["⚡", "⚖️", "🚨", "📂", "🔍", "🏛️", "🔥", "⚠️", "📌", "📢", "🛡️", "📜", "💻", "🌐"];
+        let tickerText = "⚡ Cobertura centralizada de resoluciones jurídicas, ciberderecho y coyuntura política peruana 2026. ⚖️";
+        let systemColors = { bg: "#0a0c10", accent: "#ffb000" };
+        
+        let globalTexts = {
+            portalName: "TheDigitalRuins",
+            tagLeft: "<i class=\"fa-solid fa-box-archive\"></i> PRESERVACIÓN DIGITAL",
+            tagRight: "<i class=\"fa-solid fa-bullhorn\"></i> PRENSA AUTÓNOMA",
+            footerTitle: "<i class=\"fa-solid fa-headset\"></i> Canal de Contacto Oficial",
+            footerDesc: "Mesa de partes virtual confidencial para envío de reportes y filtraciones.",
+            footerMail: "thedigitalruinsproject@gmail.com"
+        };
+
+        let activeSections = [
+            { id: "corrupcion", name: "Corrupción" },
+            { id: "juridico", name: "Ámbito Jurídico" },
+            { id: "libertad", name: "Libertad de Expresión" },
+            { id: "fiscalia", name: "Fiscalía" },
+            { id: "tecnologia", name: "Tecnología y Ciberderecho" }
+        ];
+
+        let allNews = [
+            { 
+                id: "corr_1", 
+                category: "corrupcion", 
+                tag: "Gobierno Local", 
+                title: "Auditoría revela desvíos en presupuestos regionales", 
+                image: "", 
+                excerpt: "Informes internos exponen irregularidades en licitaciones públicas de infraestructura vial.", 
+                content: "Un análisis detallado a los contratos adjudicados durante el primer trimestre exponen sobrecostos y desvíos técnicos en obras de pavimentación regional. El frente de defensa civil exige la intervención inmediata de las autoridades judiciales competentes.", 
+                date: "15 Jun 2026" 
+            },
+            { 
+                id: "jur_1", 
+                category: "juridico", 
+                tag: "Jurisprudencia Civil", 
+                title: "Parámetros de la Prescripción Adquisitiva Inmobiliaria", 
+                image: "", 
+                excerpt: "Criterios unificados sobre la acreditación de la posesión pacífica y continua de predios.", 
+                content: "El análisis del Código Civil ratifica que para la validez de la prescripción adquisitiva de dominio se exige un comportamiento riguroso de propietario sin perturbaciones fácticas o jurídicas. Elementos de prueba documental resultan mandatorios antes de iniciar la vía correspondiente.", 
+                date: "14 Jun 2026" 
+            }
+        ];
+
+        let commentsDatabase = {
+            "jur_1": [{ id: "c_init", author: "Anon-Pro", text: "Excelente aporte técnico y legal.", time: "14 Jun 2026, 11:20" }]
+        };
+
+        if (localStorage.getItem('ruins_ticker_v5')) tickerText = localStorage.getItem('ruins_ticker_v5');
+        if (localStorage.getItem('ruins_news_v8')) allNews = JSON.parse(localStorage.getItem('ruins_news_v8'));
+        if (localStorage.getItem('ruins_comments_v4')) commentsDatabase = JSON.parse(localStorage.getItem('ruins_comments_v4'));
+        if (localStorage.getItem('ruins_colors_v2')) systemColors = JSON.parse(localStorage.getItem('ruins_colors_v2'));
+        if (localStorage.getItem('ruins_sections_v2')) activeSections = JSON.parse(localStorage.getItem('ruins_sections_v2'));
+        if (localStorage.getItem('ruins_texts_v1')) globalTexts = JSON.parse(localStorage.getItem('ruins_texts_v1'));
+
+        function syncDB() {
+            localStorage.setItem('ruins_ticker_v5', tickerText);
+            localStorage.setItem('ruins_news_v8', JSON.stringify(allNews));
+            localStorage.setItem('ruins_comments_v4', JSON.stringify(commentsDatabase));
+            localStorage.setItem('ruins_colors_v2', JSON.stringify(systemColors));
+            localStorage.setItem('ruins_sections_v2', JSON.stringify(activeSections));
+            localStorage.setItem('ruins_texts_v1', JSON.stringify(globalTexts));
+        }
+
+        function applyStyles() {
+            document.documentElement.style.setProperty('--bg-principal', systemColors.bg);
+            document.documentElement.style.setProperty('--color-acento', systemColors.accent);
+            let res = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(systemColors.accent);
+            if(res) document.documentElement.style.setProperty('--color-acento-rgb', `${parseInt(res[1],16)},${parseInt(res[2],16)},${parseInt(res[3],16)}`);
+            document.getElementById('cfg-bg-color').value = systemColors.bg;
+            document.getElementById('cfg-accent-color').value = systemColors.accent;
+        }
+
+        function selectPalette(bg, accent) {
+            systemColors.bg = bg; systemColors.accent = accent;
+            applyStyles(); syncDB();
+        }
+
+        function applyCustomColors() {
+            systemColors.bg = document.getElementById('cfg-bg-color').value;
+            systemColors.accent = document.getElementById('cfg-accent-color').value;
+            applyStyles(); syncDB();
+        }
+
+        function buildStructure() {
+            const menu = document.getElementById('render-aside-menu');
+            menu.innerHTML = `<li class="${currentFilter==='all'?'active':''}" onclick="changeCat('all')">Todos los Informes</li>`;
+            const sel = document.getElementById('post-category'); sel.innerHTML = '';
+            activeSections.forEach(s => {
+                let li = document.createElement('li'); li.className = currentFilter===s.id?'active':''; li.innerText = s.name; li.onclick = () => changeCat(s.id);
+                menu.appendChild(li);
+                let op = document.createElement('option'); op.value = s.id; op.innerText = s.name; sel.appendChild(op);
+            });
+        }
+
+        function changeCat(id) { currentFilter = id; buildStructure(); displayNews(); }
+        function displayTicker() { document.getElementById('ticker-text-container').innerHTML = `<span class="ticker-item">${tickerText}</span><span class="ticker-item">${tickerText}</span>`; }
+
+        function renderPortalTexts() {
+            document.getElementById('pub-main-logo').innerHTML = `${globalTexts.portalName.replace(/<span>(.*?)<\/span>/g, '$1')} <span ondblclick="toggleControlMaestro()">PROJECT</span>`;
+            document.getElementById('pub-header-tag-left').innerHTML = globalTexts.tagLeft;
+            document.getElementById('pub-header-tag-right').innerHTML = globalTexts.tagRight;
+            document.getElementById('pub-footer-title').innerHTML = globalTexts.footerTitle;
+            document.getElementById('pub-footer-desc').innerText = globalTexts.footerDesc;
+            document.getElementById('pub-footer-mail').innerHTML = `<i class="fa-solid fa-envelope"></i> ${globalTexts.footerMail}`;
+            document.getElementById('pub-footer-mail').href = `mailto:${globalTexts.footerMail}`;
+
+            document.getElementById('cfg-portal-name').value = globalTexts.portalName;
+            document.getElementById('cfg-tag-left').value = globalTexts.tagLeft;
+            document.getElementById('cfg-tag-right').value = globalTexts.tagRight;
+            document.getElementById('cfg-footer-title').value = globalTexts.footerTitle;
+            document.getElementById('cfg-footer-desc').value = globalTexts.footerDesc;
+            document.getElementById('cfg-footer-mail').value = globalTexts.footerMail;
+        }
+
+        window.updateLiveTexts = function() {
+            globalTexts.portalName = document.getElementById('cfg-portal-name').value;
+            globalTexts.tagLeft = document.getElementById('cfg-tag-left').value;
+            globalTexts.tagRight = document.getElementById('cfg-tag-right').value;
+            globalTexts.footerTitle = document.getElementById('cfg-footer-title').value;
+            globalTexts.footerDesc = document.getElementById('cfg-footer-desc').value;
+            globalTexts.footerMail = document.getElementById('cfg-footer-mail').value;
+        }
+
+        window.savePortalTexts = function() {
+            updateLiveTexts(); syncDB(); renderPortalTexts(); alert("¡Textos globales guardados y actualizados!");
+        }
+
+        function renderInventories() {
+            const newsInv = document.getElementById('admin-news-inventory'); newsInv.innerHTML = '';
+            allNews.forEach(n => {
+                let div = document.createElement('div'); div.className = 'control-row-item';
+                div.innerHTML = `<span><b>[${n.category.toUpperCase()}]</b> ${n.title.substring(0,35)}...</span>
+                <div>
+                    <button class="btn-inline-admin edit-btn" onclick="loadPostToEdit('${n.id}')">Editar</button>
+                    <button class="btn-inline-admin del-btn" onclick="deletePost('${n.id}')">Borrar</button>
+                </div>`;
+                newsInv.appendChild(div);
+            });
+
+            const commInv = document.getElementById('admin-comments-inventory'); commInv.innerHTML = '';
+            let count = 0;
+            for(let pId in commentsDatabase) {
+                commentsDatabase[pId].forEach(c => {
+                    count++;
+                    let div = document.createElement('div'); div.className = 'control-row-item';
+                    div.style.flexDirection = 'column'; div.style.alignItems = 'flex-start';
+                    div.innerHTML = `
+                        <div style="font-size:0.75rem; color:var(--color-acento); font-family:var(--ff-tecnica);">Autor: ${c.author} | En post ID: ${pId}</div>
+                        <input type="text" class="comment-input" style="margin:5px 0; padding:6px; font-size:0.85rem;" value="${c.text}" id="inline-cmt-text-${c.id}">
+                        <div style="align-self: flex-end; display:flex; gap:5px;">
+                            <button class="btn-inline-admin edit-btn" onclick="saveInlineComment('${pId}','${c.id}')">Guardar</button>
+                            <button class="btn-inline-admin del-btn" onclick="deleteComment('${pId}','${c.id}')">Eliminar</button>
+                        </div>`;
+                    commInv.appendChild(div);
+                });
+            }
+            if(count===0) commInv.innerHTML = '<p style="font-size:0.8rem; color:var(--texto-apagado);">No hay comentarios.</p>';
+        }
+
+        window.saveInlineComment = function(postId, cmtId) {
+            let newText = document.getElementById(`inline-cmt-text-${cmtId}`).value.trim();
+            if(!newText) return alert("Comentario vacío.");
+            let targetCmt = commentsDatabase[postId].find(c => c.id === cmtId);
+            if(targetCmt) {
+                targetCmt.text = newText; syncDB(); renderInventories(); if(activeArticleId===postId) loadComments(postId); displayNews(); alert("¡Comentario modificado!");
+            }
+        }
+
+        function renderSectionManager() {
+            const container = document.getElementById('section-manager-container'); container.innerHTML = '';
+            activeSections.forEach((sec, idx) => {
+                let div = document.createElement('div'); div.className = 'section-row-item';
+                div.innerHTML = `
+                    <button class="btn-order-action" onclick="moveSection(${idx}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
+                    <button class="btn-order-action" onclick="moveSection(${idx}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
+                    <input type="text" class="comment-input" style="margin:0;" value="${sec.name}" id="input-sec-name-${idx}">
+                    <button class="btn-inline-admin del-btn" style="height:30px; padding:0 10px;" onclick="deleteSection(${idx})"><i class="fa-solid fa-trash"></i></button>`;
+                container.appendChild(div);
+            });
+        }
+
+        window.addNewSection = function() {
+            let name = document.getElementById('new-section-name').value.trim();
+            if(!name) return alert("Escribe un nombre para la sección.");
+            let id = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
+            if(activeSections.find(s=>s.id === id)) return alert("Esa sección ya existe.");
+            activeSections.push({ id, name }); document.getElementById('new-section-name').value = '';
+            renderSectionManager();
+        }
+
+        window.deleteSection = function(idx) {
+            if(confirm(`¿Estás seguro de eliminar la sección "${activeSections[idx].name}"? Las noticias existentes bajo este ID ya no se filtrarán correctamente.`)) {
+                activeSections.splice(idx, 1); renderSectionManager();
+            }
+        }
+
+        window.moveSection = function(idx, dir) {
+            let target = idx + dir;
+            if(target >= 0 && target < activeSections.length) {
+                activeSections.forEach((s, i) => s.name = document.getElementById(`input-sec-name-${i}`).value.trim() || s.name);
+                let temp = activeSections[idx]; activeSections[idx] = activeSections[target]; activeSections[target] = temp;
+                renderSectionManager();
+            }
+        }
+
+        window.saveSectionLayout = function() {
+            activeSections.forEach((s, i) => {
+                let inp = document.getElementById(`input-sec-name-${i}`);
+                if(inp) s.name = inp.value.trim() || s.name;
+            });
+            syncDB(); buildStructure(); displayNews(); alert("¡Secciones sincronizadas con éxito!");
+        }
+
+        window.saveTickerData = function() {
+            tickerText = document.getElementById('ticker-input').value.trim(); syncDB(); displayTicker(); alert("Ticker guardado.");
+        }
+
+        window.toggleControlMaestro = function() {
+            const overlay = document.getElementById('panel-control-maestro');
+            const portal = document.getElementById('view-public-portal');
+            if(!isAdminUnlocked) {
+                let u = prompt("Admin ID:"); if(u !== _0x_admin_user) return;
+                let p = prompt("Contraseña:"); if(p !== _0x_admin_pass) return;
+                let s = prompt("Token Secreto:"); if(s !== _0x_admin_secret) return;
+                isAdminUnlocked = true; portal.style.display = 'none'; overlay.style.display = 'block';
+                document.getElementById('ticker-input').value = tickerText;
+                const emg = document.getElementById('ticker-emoji-grid'); emg.innerHTML = '';
+                wideEmojiBank.forEach(e => { let n = document.createElement('div'); n.className='emoji-node'; n.innerText=e; n.onclick=()=>document.getElementById('ticker-input').value+=` ${e} `; emg.appendChild(n); });
+                renderSectionManager(); renderInventories(); renderPortalTexts();
+            } else {
+                isAdminUnlocked = false; overlay.style.display = 'none'; portal.style.display = 'flex'; clearForm(); displayNews(); renderPortalTexts();
+            }
+        }
+
+        window.processLocalImage = function(input) {
+            let f = input.files[0];
+            if(f) {
+                if(f.size > 1500000) return alert("Máximo 1.5MB.");
+                let r = new FileReader(); r.onload = (e) => {
+                    document.getElementById('post-img-base64').value = e.target.result;
+                    document.getElementById('file-preview-status').style.display='block'; document.getElementById('file-preview-status').innerText = "✓ Imagen cargada";
+                }; r.readAsDataURL(f);
+            }
+        }
+
+        function displayNews() {
+            const container = document.getElementById('news-container'); container.innerHTML = '';
+            const filtered = currentFilter==='all'?allNews:allNews.filter(n=>n.category===currentFilter);
+            if(filtered.length===0) { container.innerHTML = '<div style="padding:40px; text-align:center; color:var(--texto-apagado);">Cero publicaciones en este apartado.</div>'; return; }
+            filtered.forEach(n => {
+                let card = document.createElement('div'); card.className = 'news-card';
+                let img = n.image ? `<img src="${n.image}" class="news-img">` : '';
+                let totalCmt = commentsDatabase[n.id] ? commentsDatabase[n.id].length : 0;
+                card.innerHTML = `${img}<div class="news-body">
+    <span class="news-tag">${n.tag}</span>
+    <h3 class="news-title" onclick="openArticle('${n.id}')">${n.title}</h3>
+    <p class="news-excerpt">${n.excerpt}</p>
+    
+    <div style="margin: 10px 0; display: flex; gap: 10px;">
+        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(n.title)}&url=${encodeURIComponent(window.location.href)}" target="_blank" style="color:#fff; font-size: 1.1rem;"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(n.title)}%20${encodeURIComponent(window.location.href)}" target="_blank" style="color:#25D366; font-size: 1.1rem;"><i class="fa-brands fa-whatsapp"></i></a>
+    </div>
+
+    <div class="news-meta">
+        <span><i class="fa-solid fa-calendar"></i> ${n.date} | <i class="fa-solid fa-comment"></i> ${totalCmt}</span>
+        <span style="color:var(--color-acento); cursor:pointer;" onclick="openArticle('${n.id}')">Leer →</span>
+    </div>
+</div>`;
+                container.appendChild(card);
+            });
+        }
+
+        window.openArticle = function(id) {
+            activeArticleId = id; const news = allNews.find(n => n.id === id); if(!news) return;
+            const modal = document.getElementById('article-modal');
+            document.getElementById('modal-body-content').innerHTML = `
+                <span class="news-tag">${news.tag}</span><h1 style="color:#fff; margin:10px 0; font-family: var(--ff-titulos); font-size: 1.85rem;">${news.title}</h1>
+                <div style="color:var(--texto-apagado); font-size:0.8rem; margin-bottom:15px; font-family: var(--ff-tecnica);">Fecha: ${news.date} | Archivo de Preservación</div>
+                ${news.image?`<img src="${news.image}" class="modal-img">`:''}<div style="color:#f1f5f9; font-size:1.02rem; white-space: pre-line; font-weight:400;">${news.content}</div>`;
+            
+            let cleanTitle = encodeURIComponent(news.title);
+            let shareUrl = encodeURIComponent(window.location.href);
+
+            document.getElementById('modal-share-bar').innerHTML = `
+                <span style="font-size:0.85rem; color:var(--texto-apagado); margin-right:5px; font-family: var(--ff-tecnica);">COMPARTIR:</span> 
+                <a class="share-btn share-x" href="https://twitter.com/intent/tweet?text=${cleanTitle}&url=${shareUrl}" target="_blank"><i class="fa-brands fa-x-twitter"></i> X</a>
+                <a class="share-btn share-wa" href="https://api.whatsapp.com/send?text=${cleanTitle}%20${shareUrl}" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                <a class="share-btn share-ig" href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i> Instagram</a>`;
+                
+            loadComments(id); modal.style.display = 'flex';
+        }
+
+        function loadComments(id) {
+            const box = document.getElementById('comments-list-container'); box.innerHTML = '';
+            const list = commentsDatabase[id] || [];
+            if(list.length===0) { box.innerHTML = '<p style="font-size:0.85rem; color:var(--texto-apagado); font-style:italic;">Sin aportes ciudadanos en esta línea.</p>'; return; }
+            list.forEach(c => {
+                let d = document.createElement('div'); d.className = 'comment-item';
+                d.innerHTML = `<div class="comment-author"><i class="fa-solid fa-circle-user"></i> ${c.author}</div><div class="comment-text">${c.text}</div><div class="comment-time">${c.time}</div>`;
+                box.appendChild(d);
+            });
+        }
+
+        window.submitNewComment = function() {
+            let n = document.getElementById('commenter-name').value.trim();
+            let t = document.getElementById('commenter-text').value.trim();
+            if(!n || !t) return alert("Campos requeridos.");
+            if(!commentsDatabase[activeArticleId]) commentsDatabase[activeArticleId] = [];
+            commentsDatabase[activeArticleId].push({ id: "c_"+Date.now(), author: n, text: t, time: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+            syncDB(); document.getElementById('commenter-text').value=''; loadComments(activeArticleId); displayNews();
+        }
+
+        window.deleteComment = function(postId, cmtId) {
+            if(confirm("¿Eliminar este comentario desde el control maestro?")) {
+                commentsDatabase[postId] = commentsDatabase[postId].filter(c => c.id !== cmtId);
+                syncDB(); renderInventories(); if(activeArticleId===postId) loadComments(postId); displayNews();
+            }
+        }
+
+        window.closeArticle = function() { document.getElementById('article-modal').style.display='none'; activeArticleId=null; }
+
+        window.savePost = function() {
+            let id = document.getElementById('edit-post-id').value;
+            let title = document.getElementById('post-title').value.trim();
+            let tag = document.getElementById('post-tag').value.trim();
+            let cat = document.getElementById('post-category').value;
+            let img = document.getElementById('post-img-base64').value;
+            let exc = document.getElementById('post-excerpt').value.trim();
+            let cnt = document.getElementById('post-content').value.trim();
+
+            if(!title || !exc || !cnt) return alert("Faltan datos obligatorios.");
+
+            if(id) {
+                let idx = allNews.findIndex(n => n.id === id);
+                if(idx !== -1) {
+                    allNews[idx].title = title; allNews[idx].tag = tag || "Informe"; allNews[idx].category = cat;
+                    if(img) allNews[idx].image = img; allNews[idx].excerpt = exc; allNews[idx].content = cnt;
+                }
+            } else {
+                allNews.unshift({ id: "n_"+Date.now(), title, tag: tag||"Informe", category: cat, image: img, excerpt: exc, content: cnt, date: new Date().toLocaleDateString('es-PE', {day:'numeric', month:'short', year:'numeric'}) });
+            }
+            syncDB(); alert("¡Base de datos guardada con éxito!"); toggleControlMaestro();
+        }
+
+        window.loadPostToEdit = function(id) {
+            let news = allNews.find(n => n.id === id); if(!news) return;
+            document.getElementById('form-action-title').innerHTML = `🛠️ Editando Artículo: ${news.title.substring(0,20)}...`;
+            document.getElementById('btn-submit-form').innerText = "Aplicar Cambios";
+            document.getElementById('btn-cancel-form').style.display = 'block';
+            document.getElementById('edit-post-id').value = news.id;
+            document.getElementById('post-title').value = news.title;
+            document.getElementById('post-tag').value = news.tag;
+            document.getElementById('post-category').value = news.category;
+            document.getElementById('post-excerpt').value = news.excerpt;
+            document.getElementById('post-content').value = news.content;
+            document.getElementById('anchor-redactor').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.deletePost = function(id) {
+            if(confirm("¿Destruir artículo de manera permanente?")) {
+                allNews = allNews.filter(n => n.id !== id); if(commentsDatabase[id]) delete commentsDatabase[id];
+                syncDB(); renderInventories(); displayNews();
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('form-action-title').innerHTML = `<i class="fa-solid fa-pen-nib"></i> Formulario Redactor Avanzado`;
+            document.getElementById('btn-submit-form').innerText = "Ejecutar Guardado Completo";
+            document.getElementById('btn-cancel-form').style.display = 'none';
+            document.getElementById('edit-post-id').value = ''; document.getElementById('post-img-base64').value = '';
+            document.getElementById('post-title').value = ''; document.getElementById('post-tag').value = '';
+            document.getElementById('post-excerpt').value = ''; document.getElementById('post-content').value = '';
+            document.getElementById('file-preview-status').style.display = 'none';
+        }
+
+        window.cancelEditing = function() { clearForm(); }
+
+        applyStyles();
+        buildStructure();
+        displayTicker();
+        displayNews();
+        renderPortalTexts();
+    </script>
+</body>
+</html>
